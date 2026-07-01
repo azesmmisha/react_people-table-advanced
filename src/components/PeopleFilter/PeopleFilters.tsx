@@ -1,4 +1,5 @@
-import { Link, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
+import { SearchLink } from '../SearchLink/SearchLink';
 
 type Props = {};
 
@@ -28,7 +29,7 @@ export const PeopleFilters: React.FC<Props> = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const sex = searchParams.get('sex') || '';
   const query = searchParams.get('query') || '';
-  const centuries = searchParams.getAll('century') || [];
+  const centuries = searchParams.getAll('centuries') || [];
 
   function setSearchWith(params: Params) {
     const search = getSearchWith(params, searchParams);
@@ -43,7 +44,7 @@ export const PeopleFilters: React.FC<Props> = () => {
   const toggledCenturies = (century: number) => {
     return centuries.includes(century.toString())
       ? centuries.filter(cent => cent !== century.toString())
-      : [...centuries, century];
+      : [...centuries, century].map(String);
   };
 
   return (
@@ -51,24 +52,24 @@ export const PeopleFilters: React.FC<Props> = () => {
       <p className="panel-heading">Filters</p>
 
       <p className="panel-tabs" data-cy="SexFilter">
-        <Link
+        <SearchLink
           className={`${sex !== 'm' && sex !== 'f' ? 'is-active' : ''}`}
-          to={{ search: getSearchWith({ sex: null }, searchParams) }}
+          params={{ sex: null }}
         >
           All
-        </Link>
-        <Link
+        </SearchLink>
+        <SearchLink
           className={`${sex === 'm' ? 'is-active' : ''}`}
-          to={{ search: getSearchWith({ sex: 'm' }, searchParams) }}
+          params={{ sex: 'm' }}
         >
           Male
-        </Link>
-        <Link
+        </SearchLink>
+        <SearchLink
           className={`${sex === 'f' ? 'is-active' : ''}`}
-          to={{ search: getSearchWith({ sex: 'f' }, searchParams) }}
+          params={{ sex: 'f' }}
         >
           Female
-        </Link>
+        </SearchLink>
       </p>
 
       <div className="panel-block">
@@ -93,49 +94,70 @@ export const PeopleFilters: React.FC<Props> = () => {
           <div className="level-left">
             {[16, 17, 18, 19, 20].map(century => {
               return (
-                <Link
+                // <Link
+                //   key={century}
+                //   data-cy="century"
+                //   className={`button mr-1 ${centuries.includes(century.toString()) ? 'is-info' : ''}`}
+                //   to={{
+                //     search: getSearchWith(
+                //       { centuries: toggledCenturies(century) },
+                //       searchParams,
+                //     ),
+                //   }}
+                // >
+                //   {century}
+                // </Link>
+                <SearchLink
                   key={century}
                   data-cy="century"
                   className={`button mr-1 ${centuries.includes(century.toString()) ? 'is-info' : ''}`}
-                  to={{
-                    search: getSearchWith(
-                      { century: toggledCenturies(century) },
-                      searchParams,
-                    ),
-                  }}
+                  params={{ centuries: toggledCenturies(century) }}
                 >
                   {century}
-                </Link>
+                </SearchLink>
               );
             })}
           </div>
 
           <div className="level-right ml-4">
-            <Link
+            {/* <Link
               data-cy="centuryALL"
               className="button is-success is-outlined"
               to={{
-                search: getSearchWith({ century: null }, searchParams),
+                search: getSearchWith({ centuries: null }, searchParams),
               }}
             >
               All
-            </Link>
+            </Link> */}
+            <SearchLink
+              data-cy="centuryALL"
+              className="button is-success is-outlined"
+              params={{ centuries: null }}
+            >
+              All
+            </SearchLink>
           </div>
         </div>
       </div>
 
       <div className="panel-block">
-        <Link
+        {/* <Link
           className="button is-link is-outlined is-fullwidth"
           to={{
             search: getSearchWith(
-              { sex: null, century: null, query: null },
+              { sex: null, centuries: null, query: null },
               searchParams,
             ),
           }}
         >
           Reset all filters
-        </Link>
+        </Link> */}
+        <SearchLink
+          className="button is-link is-outlined is-fullwidth"
+          params={{ sex: null, centuries: null, query: null }}
+        >
+          Reset all filters
+        </SearchLink>
       </div>
     </nav>
   );

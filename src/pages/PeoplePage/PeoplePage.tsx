@@ -11,7 +11,7 @@ const getFilteredPeople = (people: Person[], searchParams: URLSearchParams) => {
 
   const sex = searchParams.get('sex') || '';
   const query = searchParams.get('query') || '';
-  const centuries = searchParams.getAll('century') || [];
+  const centuries = searchParams.getAll('centuries') || [];
 
   if (sex) {
     filtered = filtered.filter(person => person.sex === sex);
@@ -46,7 +46,9 @@ export const PeoplePage = () => {
   );
 
   const showError = !loading && error;
-  const showNoPeople = !loading && !error && people.length === 0;
+  const showNoPeopleOnServer = !loading && !error && people.length === 0;
+  const showNoCriteriaMatch =
+    !loading && !error && people.length > 0 && visiblePeople.length === 0;
   const showTable = !loading && !error && visiblePeople.length > 0;
 
   return (
@@ -69,19 +71,17 @@ export const PeoplePage = () => {
                 </p>
               )}
 
-              {showNoPeople && (
+              {showNoPeopleOnServer && (
                 <p data-cy="noPeopleMessage">
                   There are no people on the server
                 </p>
               )}
 
-              {showTable && (
+              {showNoCriteriaMatch && (
                 <p>There are no people matching the current search criteria</p>
               )}
 
-              {!loading && !error && visiblePeople.length > 0 && (
-                <PeopleTable people={visiblePeople} />
-              )}
+              {showTable && <PeopleTable people={visiblePeople} />}
             </div>
           </div>
         </div>
